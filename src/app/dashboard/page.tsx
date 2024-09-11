@@ -27,14 +27,24 @@ const Dashboard = () => {
     return <p>Loading...</p>;
   }
   const getCats = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/cats`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "Aplication/son",
-        authorization: `Bearer ${session?.user?.token}`,
-      },
-    });
-    setCats(await res.json());
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/cats`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${session?.user?.token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`Error: ${res.statusText}`);
+      }
+
+      const data = await res.json();
+      setCats(data);
+    } catch (error) {
+      console.error("Failed to fetch cats:", error);
+    }
   };
 
   return (
